@@ -1,0 +1,13 @@
+name: SuffixChanger
+version: '${version}'
+main: me.window.suffixchanger.SuffixChanger
+api-version: '1.20'
+depend: [LuckPerms]
+authors: [Window5]
+libraries:
+  - net.projecttl:InventoryGUI-api:4.5.1
+commands:
+  suffix:
+    description: Open the SuffixChanger GUI
+    usage: /suffix
+    permission: suffixchanger.suffix
