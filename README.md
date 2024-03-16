@@ -17,7 +17,7 @@ Paper plugin to change LuckPerms suffixes via a GUI.
 
 ## Dependencies
 
-This plugin obviously requires [LuckPerms]() to function.
+This plugin obviously requires [LuckPerms](https://luckperms.net/download) to function.
 
 # Usage
 
