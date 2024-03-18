@@ -2,7 +2,6 @@ package me.window.suffixchanger
 
 import net.kyori.adventure.text.Component
 import net.luckperms.api.LuckPerms
-import net.luckperms.api.model.group.Group
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.Node
 import net.luckperms.api.node.types.DisplayNameNode
@@ -59,22 +58,22 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 oConfig = config
                 config.addDefault("watermark", true)
                 config.addDefault("obfuscate", true)
-                config.options().copyDefaults(true);
-                saveConfig();
+                config.options().copyDefaults(true)
+                saveConfig()
                 api = provider.provider
                 this.getCommand("suffix")!!.setExecutor(this)
                 this.getCommand("addsuffix")!!.setExecutor(this)
             } else {
-                logger.warning("Could not find LuckPerms! This plugin is required.");
-                Bukkit.getPluginManager().disablePlugin(this);
+                logger.warning("Could not find LuckPerms! This plugin is required.")
+                Bukkit.getPluginManager().disablePlugin(this)
             }
         } else {
             /*
              * We inform about the fact that PlaceholderAPI isn't installed and then
              * disable this plugin to prevent issues.
              */
-            logger.warning("Could not find LuckPerms! This plugin is required.");
-            Bukkit.getPluginManager().disablePlugin(this);
+            logger.warning("Could not find LuckPerms! This plugin is required.")
+            Bukkit.getPluginManager().disablePlugin(this)
         }
     }
 

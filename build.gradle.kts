@@ -1,12 +1,10 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm") version "1.9.23"
     id("java")
 }
 
 group = "me.window"
-version = "1.0"
+version = "1.1"
 
 repositories {
     mavenCentral()

@@ -21,7 +21,7 @@ object SuffixGui {
     fun inventory(player: Player, page: Int = 0) {
         val suffixes = ArrayList<String>()
 
-        val track = SuffixChanger.api!!.trackManager.getTrack("suffixes")
+        val track = SuffixChanger.api.trackManager.getTrack("suffixes")
         for (group in track!!.groups) {
             if(player.hasPermission("suffix.$group")) {
                 suffixes.add(0, group)
@@ -31,8 +31,8 @@ object SuffixGui {
         }
 
         fun getSuffix(roup: String): String {
-            val group: Group = SuffixChanger.api!!.groupManager.getGroup(roup)!!
-            return "&r&f" + group.cachedData.metaData.suffix;
+            val group: Group = SuffixChanger.api.groupManager.getGroup(roup)!!
+            return "&r&f" + group.cachedData.metaData.suffix
         }
 
         fun createItem(suffix: Component, suffixName: String): ItemStack {
@@ -42,7 +42,7 @@ object SuffixGui {
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES)
                 meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
                 item.setItemMeta(meta)
-                item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
+                item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1)
                 return item
             } else {
                 val item = ItemStack(Material.NAME_TAG)
