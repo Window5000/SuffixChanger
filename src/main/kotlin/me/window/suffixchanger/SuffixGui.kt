@@ -1,5 +1,6 @@
 package me.window.suffixchanger
 
+import me.window.suffixchanger.SuffixChanger.Companion.stripSuffix
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -39,7 +40,7 @@ object SuffixGui {
                 val item = ItemStack(Material.NAME_TAG)
                 val meta = item.itemMeta
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES)
-                meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(suffix).strip())))
+                meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
                 item.setItemMeta(meta)
                 item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1);
                 return item
@@ -48,9 +49,9 @@ object SuffixGui {
                 val meta = item.itemMeta
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                 if(SuffixChanger.oConfig.getBoolean("obfuscate"))
-                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(suffix).strip()).decorate(TextDecoration.OBFUSCATED)))
+                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix).decorate(TextDecoration.OBFUSCATED))
                 else
-                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(suffix).strip())))
+                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
                 item.setItemMeta(meta)
                 return item
             }
@@ -61,14 +62,14 @@ object SuffixGui {
                 if (i >= 45 * (page + 1)) break
                 if (i < 45 * page) continue
                 val newI = i - page * 45
-                slot(if (newI >= 45) newI + 3 else newI, createItem(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix)), suffix)) {
+                slot(if (newI >= 45) newI + 3 else newI, createItem(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix).stripSuffix()), suffix)) {
                     if (player.hasPermission("suffix.$suffix")) {
                         for (suffix2 in SuffixChanger.api.trackManager.getTrack("suffixes")!!.groups) {
                             SuffixChanger.removePermission(SuffixChanger.getUser(player), "group.$suffix2")
                         }
                         SuffixChanger.addPermission(SuffixChanger.getUser(player), "group.$suffix")
                         player.sendMessage(Component.text("Your suffix is now ").color(NamedTextColor.AQUA)
-                                .append(MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix))).strip())))
+                                .append(MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix).stripSuffix())))))
                     }
                 }
             }

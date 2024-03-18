@@ -41,6 +41,15 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
         fun getUser(player: Player): User {
             return api.getPlayerAdapter(Player::class.java).getUser(player)
         }
+
+        fun String.stripSuffix(): String {
+            println("$this: 0")
+            val match = Regex("&(.) +").find(this) ?: return this
+            println("$this: 1")
+            if(match.groupValues[1].isEmpty()) return this
+            println("$this: 2")
+            return this.replaceFirst(Regex("&(.) +"), "&${match.groupValues[1]}")
+        }
     }
 
     override fun onEnable() {
@@ -108,7 +117,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 }
                 api.trackManager.getTrack("suffixes")!!.appendGroup(api.groupManager.getGroup(args[0].lowercase())!!)
                 api.trackManager.saveTrack(api.trackManager.getTrack("suffixes")!!)
-                sender.sendMessage(Component.text("Successfully created group ${args[0].lowercase()} with suffix ${args[1]}"))
+                sender.sendMessage(Component.text("Successfully created group ${args[0].lowercase()} with suffix ${args[1].stripSuffix()}"))
             }
         }
 
