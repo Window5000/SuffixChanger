@@ -11,3 +11,7 @@ commands:
     description: Open the SuffixChanger GUI
     usage: /suffix
     permission: suffixchanger.suffix
+  addsuffix:
+    description: Add a group with the specified suffix to luckperms
+    usage: /addsuffix <group_name> <suffix...(use as many args here as you wish)>
+    permission: suffixchanger.addsuffix

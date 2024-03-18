@@ -1,8 +1,13 @@
 package me.window.suffixchanger
 
+import net.kyori.adventure.text.Component
 import net.luckperms.api.LuckPerms
+import net.luckperms.api.model.group.Group
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.Node
+import net.luckperms.api.node.types.DisplayNameNode
+import net.luckperms.api.node.types.SuffixNode
+import net.luckperms.api.node.types.WeightNode
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -14,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin
 
 class SuffixChanger : JavaPlugin(), CommandExecutor {
     companion object {
-        var api: LuckPerms? = null
+        lateinit var api: LuckPerms
         lateinit var oConfig: FileConfiguration
 
         fun addPermission(user: User, permission: String) {
@@ -22,7 +27,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
             user.data().add(Node.builder(permission).build())
 
             // Now we need to save changes.
-            api!!.userManager.saveUser(user)
+            api.userManager.saveUser(user)
         }
 
         fun removePermission(user: User, permission: String) {
@@ -30,11 +35,11 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
             user.data().remove(Node.builder(permission).build())
 
             // Now we need to save changes.
-            api!!.userManager.saveUser(user)
+            api.userManager.saveUser(user)
         }
 
         fun getUser(player: Player): User {
-            return api!!.getPlayerAdapter(Player::class.java).getUser(player)
+            return api.getPlayerAdapter(Player::class.java).getUser(player)
         }
     }
 
@@ -49,6 +54,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 saveConfig();
                 api = provider.provider
                 this.getCommand("suffix")!!.setExecutor(this)
+                this.getCommand("addsuffix")!!.setExecutor(this)
             } else {
                 logger.warning("Could not find LuckPerms! This plugin is required.");
                 Bukkit.getPluginManager().disablePlugin(this);
@@ -63,10 +69,46 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
         }
     }
 
-    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>?): Boolean {
+    override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if(sender is Player) {
-            Bukkit.getScheduler().scheduleSyncDelayedTask(this) {
-                SuffixGui.inventory(sender)
+            if(command.name.lowercase() == "suffix") {
+                if(!sender.hasPermission("suffixchanger.suffix")) {
+                    sender.sendMessage(Bukkit.permissionMessage())
+                    return true
+                }
+                Bukkit.getScheduler().scheduleSyncDelayedTask(this) {
+                    SuffixGui.inventory(sender)
+                }
+                return true
+            }
+        }
+
+        if (command.name.lowercase() == "addsuffix") {
+            if(!sender.hasPermission("suffixchanger.addsuffix")) {
+                sender.sendMessage(Bukkit.permissionMessage())
+                return true
+            }
+            if(args.size < 2) {
+                return false
+            }
+
+            var suffix = ""
+            var i = 1
+            while (i < args.size - 1) {
+                suffix += "${args[i]} "
+                i++
+            }
+            suffix += args.last()
+
+            api.groupManager.createAndLoadGroup(args[0].lowercase()).thenRun {
+                api.groupManager.modifyGroup(args[0].lowercase()) {
+                    it.data().add(DisplayNameNode.builder("Suffix: ${args[0].lowercase()}").build())
+                    it.data().add(WeightNode.builder(3).build())
+                    it.data().add(SuffixNode.builder(suffix, 3).build())
+                }
+                api.trackManager.getTrack("suffixes")!!.appendGroup(api.groupManager.getGroup(args[0].lowercase())!!)
+                api.trackManager.saveTrack(api.trackManager.getTrack("suffixes")!!)
+                sender.sendMessage(Component.text("Successfully created group ${args[0].lowercase()} with suffix ${args[1]}"))
             }
         }
 
