@@ -21,19 +21,21 @@ This plugin obviously requires [LuckPerms](https://luckperms.net/download) to fu
 
 # Usage
 
-Create a group for each of your suffixes, then add them all to a track called ``suffixes``
-Before players can change their suffix, you need to give them the permissions ``suffix.[group name of suffix]`` of every suffix they're allowed to use.
+Create a group for each of your suffixes, then add them all to a track called ``suffixes``. Before players can change their suffix, you need to give them the permissions ``suffix.[group name of suffix]`` of every suffix they're allowed to use.
 
 ## Commands:
 - ``/suffix`` Open the SuffixChanger GUI
+- ``/reloadsuffixchanger`` Reloads the SuffixChanger config
 - ``/addsuffix <group_name> <suffix...(use as many args here as you wish)>`` Add a group with the specified suffix to luckperms
 
 ## Permissions:
   - ``suffix.[group name of suffix]`` for every suffix the player is allowed to use
   - ``suffixchanger.suffix`` to open the GUI
   - ``suffixchanger.addsuffix`` to add suffixes via a command
+  - ``suffixchanger.reload`` to reload the SuffixChanger config
 
 # Configuration
+  - ``title`` changes the title that is used for the GUI, supports [MiniMessage](https://docs.advntr.dev/minimessage/format.html)
   - ``watermark`` set to false to disable the watermark under the leftover buttons
   - ``obfuscate`` set to true to obfuscate suffixes that the players isn't allowed to use
 

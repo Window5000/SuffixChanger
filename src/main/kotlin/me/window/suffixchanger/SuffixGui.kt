@@ -57,7 +57,7 @@ object SuffixGui {
             }
         }
 
-        player.gui(Component.text("Test" + "GUI"), InventoryType.CHEST_54) {
+        player.gui(MiniMessage.miniMessage().deserialize(SuffixChanger.oConfig.getString("title")?: "<gradient:dark_red:red>Suffix</gradient><gradient:dark_blue:blue>Changer</gradient>"), InventoryType.CHEST_54) {
             for ((i, suffix) in suffixes.withIndex()) {
                 if (i >= 45 * (page + 1)) break
                 if (i < 45 * page) continue

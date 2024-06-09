@@ -1,6 +1,7 @@
 package me.window.suffixchanger
 
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.format.NamedTextColor
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.Node
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -42,11 +44,8 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
         }
 
         fun String.stripSuffix(): String {
-            println("$this: 0")
             val match = Regex("&(.) +").find(this) ?: return this
-            println("$this: 1")
             if(match.groupValues[1].isEmpty()) return this
-            println("$this: 2")
             return this.replaceFirst(Regex("&(.) +"), "&${match.groupValues[1]}")
         }
     }
@@ -58,18 +57,20 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 oConfig = config
                 config.addDefault("watermark", true)
                 config.addDefault("obfuscate", true)
+                config.addDefault("title", "<gradient:dark_red:red>Suffix</gradient><gradient:dark_blue:blue>Changer</gradient>")
                 config.options().copyDefaults(true)
                 saveConfig()
                 api = provider.provider
                 this.getCommand("suffix")!!.setExecutor(this)
                 this.getCommand("addsuffix")!!.setExecutor(this)
+                this.getCommand("reloadsuffixchanger")!!.setExecutor(this)
             } else {
                 logger.warning("Could not find LuckPerms! This plugin is required.")
                 Bukkit.getPluginManager().disablePlugin(this)
             }
         } else {
             /*
-             * We inform about the fact that PlaceholderAPI isn't installed and then
+             * We inform about the fact that LuckPerms isn't installed and then
              * disable this plugin to prevent issues.
              */
             logger.warning("Could not find LuckPerms! This plugin is required.")
@@ -91,8 +92,20 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
             }
         }
 
+        if (command.name.lowercase() == "reloadsuffixchanger" || command.name.lowercase() == "suffixchangerreload") {
+            if (!sender.hasPermission("suffixchanger.reload") && sender !is ConsoleCommandSender) {
+                sender.sendMessage(Bukkit.permissionMessage())
+                return true
+            }
+
+            reloadConfig();
+            saveDefaultConfig();
+            oConfig = config
+            sender.sendMessage(Component.text("Reloaded SuffixChanger!", NamedTextColor.GREEN))
+        }
+
         if (command.name.lowercase() == "addsuffix") {
-            if(!sender.hasPermission("suffixchanger.addsuffix")) {
+            if(!sender.hasPermission("suffixchanger.addsuffix") && sender !is ConsoleCommandSender) {
                 sender.sendMessage(Bukkit.permissionMessage())
                 return true
             }
