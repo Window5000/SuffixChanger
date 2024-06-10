@@ -1,4 +1,6 @@
-![modrinth gallery](https://cdn.modrinth.com/data/C3bNc2TF/images/5de7fd5b43387b9ddb2e1b2cd0655e9e5e795a7b.png)
+<p align="center">
+  <img src="https://cdn.modrinth.com/data/C3bNc2TF/images/5de7fd5b43387b9ddb2e1b2cd0655e9e5e795a7b.png" />
+</p>
 
 # SuffixChanger
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
