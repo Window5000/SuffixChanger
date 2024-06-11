@@ -17,11 +17,13 @@ Paper plugin to change LuckPerms suffixes via a GUI.
 
 # Install
 
-[Download the plugin](https://hangar.papermc.io/Window5/SuffixChanger) and add it to your ``plugins`` folder.
+[Download the plugin](https://github.com/Window5000/SuffixChanger/releases/latest) and add it to your ``plugins`` folder.
 
 ## Dependencies
 
 This plugin obviously requires [LuckPerms](https://luckperms.net/download) to function.
+
+For suffixes to show in chat you need another plugin to format the chat, for a simplistic formatter you can use [Vault](https://www.spigotmc.org/resources/vault.34315) and [VaultChatFormatter](https://www.spigotmc.org/resources/vaultchatformatter.49016)
 
 # Usage
 
