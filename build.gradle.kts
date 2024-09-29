@@ -1,13 +1,13 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
-    kotlin("jvm") version "1.9.23"
+    kotlin("jvm") version "2.0.20"
     id("java")
     id("com.gradleup.shadow") version "8.3.2"
 }
 
 group = "me.window"
-version = "1.3"
+version = "1.3.1"
 
 repositories {
     mavenCentral()
@@ -22,13 +22,13 @@ repositories {
 }
 
 dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("net.projecttl:InventoryGUI-api:4.5.1")
+    compileOnly("io.papermc.paper:paper-api:1.21.1-R0.1-SNAPSHOT")
+    compileOnly("net.projecttl:InventoryGUI-api:4.6.0")
     compileOnly("net.luckperms:api:5.4")
     implementation("org.bstats:bstats-bukkit:3.1.0")
 }
 
-var targetJavaVersion = 17
+var targetJavaVersion = 21
 val javaVersion = JavaVersion.toVersion(targetJavaVersion)
 java {
     sourceCompatibility = javaVersion

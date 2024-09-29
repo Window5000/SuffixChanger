@@ -42,7 +42,7 @@ object SuffixGui {
                 meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES)
                 meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
                 item.setItemMeta(meta)
-                item.addUnsafeEnchantment(Enchantment.DAMAGE_ALL, 1)
+                item.addUnsafeEnchantment(Enchantment.UNBREAKING, 1)
                 return item
             } else {
                 val item = ItemStack(Material.NAME_TAG)

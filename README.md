@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://cdn.modrinth.com/data/C3bNc2TF/images/5de7fd5b43387b9ddb2e1b2cd0655e9e5e795a7b.png" />
+  [<img src="https://cdn.modrinth.com/data/C3bNc2TF/images/5de7fd5b43387b9ddb2e1b2cd0655e9e5e795a7b.png" />](https://modrinth.com/plugin/suffixchanger)
 </p>
 
 # SuffixChanger
