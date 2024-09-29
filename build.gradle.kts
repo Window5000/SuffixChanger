@@ -1,6 +1,9 @@
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+
 plugins {
     kotlin("jvm") version "1.9.23"
     id("java")
+    id("com.gradleup.shadow") version "8.3.2"
 }
 
 group = "me.window"
@@ -22,6 +25,7 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     compileOnly("net.projecttl:InventoryGUI-api:4.5.1")
     compileOnly("net.luckperms:api:5.4")
+    implementation("org.bstats:bstats-bukkit:3.1.0")
 }
 
 var targetJavaVersion = 17
@@ -41,4 +45,18 @@ tasks.processResources {
     filesMatching("plugin.yml") {
         expand(props)
     }
+}
+
+tasks.jar {
+    archiveClassifier.set("shadowless")
+}
+
+tasks.withType<ShadowJar> {
+    archiveClassifier.set("")
+    dependencies {
+        include {
+            it.moduleGroup == "org.bstats"
+        }
+    }
+    relocate("org.bstats", "me.window.bstats")
 }

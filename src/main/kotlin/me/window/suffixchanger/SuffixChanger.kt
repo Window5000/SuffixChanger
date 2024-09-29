@@ -8,6 +8,8 @@ import net.luckperms.api.node.Node
 import net.luckperms.api.node.types.DisplayNameNode
 import net.luckperms.api.node.types.SuffixNode
 import net.luckperms.api.node.types.WeightNode
+import org.bstats.bukkit.Metrics
+import org.bstats.charts.SimplePie
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -22,6 +24,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
     companion object {
         lateinit var api: LuckPerms
         lateinit var oConfig: FileConfiguration
+        const val BSTATS_ID = 23488;
 
         fun addPermission(user: User, permission: String) {
             // Add the permission
@@ -64,6 +67,23 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 this.getCommand("suffix")!!.setExecutor(this)
                 this.getCommand("addsuffix")!!.setExecutor(this)
                 this.getCommand("reloadsuffixchanger")!!.setExecutor(this)
+
+                val metrics = Metrics(this, BSTATS_ID)
+                metrics.addCustomChart(SimplePie(
+                    "watermark"
+                ) { if (config.getBoolean("watermark")) "true" else "false" })
+                metrics.addCustomChart(SimplePie(
+                    "obfuscate"
+                ) { if (config.getBoolean("obfuscate")) "true" else "false" })
+                metrics.addCustomChart(SimplePie(
+                    "title"
+                ) { if(config.getString("title") == "<gradient:dark_red:red>Suffix</gradient><gradient:dark_blue:blue>Changer</gradient>") "default" else "custom" })
+                metrics.addCustomChart(SimplePie(
+                    "luckperms"
+                ) { provider.plugin.pluginMeta.version })
+                metrics.addCustomChart(SimplePie(
+                    "vault"
+                ) { Bukkit.getPluginManager().isPluginEnabled("Vault").toString() })
             } else {
                 logger.warning("Could not find LuckPerms! This plugin is required.")
                 Bukkit.getPluginManager().disablePlugin(this)
