@@ -11,7 +11,6 @@ import net.projecttl.inventory.gui
 import net.projecttl.inventory.util.InventoryType
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
@@ -39,10 +38,10 @@ object SuffixGui {
             if (player.hasPermission("suffix.$suffixName")) {
                 val item = ItemStack(Material.NAME_TAG)
                 val meta = item.itemMeta
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS, ItemFlag.HIDE_ATTRIBUTES)
+                meta.setEnchantmentGlintOverride(true)
+                meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                 meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
                 item.setItemMeta(meta)
-                item.addUnsafeEnchantment(Enchantment.UNBREAKING, 1)
                 return item
             } else {
                 val item = ItemStack(Material.NAME_TAG)
@@ -64,7 +63,7 @@ object SuffixGui {
                 val newI = i - page * 45
                 slot(if (newI >= 45) newI + 3 else newI, createItem(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix).stripSuffix()), suffix)) {
                     if (player.hasPermission("suffix.$suffix")) {
-                        for (suffix2 in SuffixChanger.api.trackManager.getTrack("suffixes")!!.groups) {
+                        for (suffix2 in SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track")?: "suffixes")!!.groups) {
                             SuffixChanger.removePermission(SuffixChanger.getUser(player), "group.$suffix2")
                         }
                         SuffixChanger.addPermission(SuffixChanger.getUser(player), "group.$suffix")
@@ -87,10 +86,10 @@ object SuffixGui {
                 close()
             }
 
-            val item2 = ItemStack(Material.GREEN_STAINED_GLASS_PANE)
+            val item2 = ItemStack(if (page > 0) Material.GREEN_STAINED_GLASS_PANE else Material.YELLOW_STAINED_GLASS_PANE)
             val meta2 = item2.itemMeta
             meta2.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-            meta2.displayName(Component.text("Previous Page", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
+            meta2.displayName(Component.text("Previous Page", if (page > 0) NamedTextColor.GREEN else NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
             item2.setItemMeta(meta2)
             slot(48, item2) {
                 if (page > 0) {
@@ -98,10 +97,10 @@ object SuffixGui {
                 }
             }
 
-            val item3 = ItemStack(Material.GREEN_STAINED_GLASS_PANE)
+            val item3 = ItemStack(if (suffixes.size > (page + 1) * 45) Material.GREEN_STAINED_GLASS_PANE else Material.YELLOW_STAINED_GLASS_PANE)
             val meta3 = item3.itemMeta
             meta3.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-            meta3.displayName(Component.text("Next Page", NamedTextColor.GREEN).decoration(TextDecoration.ITALIC, false))
+            meta3.displayName(Component.text("Next Page", if (suffixes.size > (page + 1) * 45) NamedTextColor.GREEN else NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
             item3.setItemMeta(meta3)
             slot(50, item3) {
                 if (suffixes.size > (page + 1) * 45) {
