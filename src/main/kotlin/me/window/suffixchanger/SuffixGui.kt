@@ -21,7 +21,7 @@ object SuffixGui {
     fun inventory(player: Player, page: Int = 0) {
         val suffixes = ArrayList<String>()
 
-        val track = SuffixChanger.api.trackManager.getTrack("suffixes")
+        val track = SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track")?: "suffixes")
         for (group in track!!.groups) {
             if(player.hasPermission("suffix.$group")) {
                 suffixes.add(0, group)

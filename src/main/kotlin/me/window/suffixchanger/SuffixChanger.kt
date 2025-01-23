@@ -24,7 +24,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
     companion object {
         lateinit var api: LuckPerms
         lateinit var oConfig: FileConfiguration
-        const val BSTATS_ID = 23488;
+        const val BSTATS_ID = 23488
 
         fun addPermission(user: User, permission: String) {
             // Add the permission
@@ -58,9 +58,16 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
             val provider = Bukkit.getServicesManager().getRegistration(LuckPerms::class.java)
             if (provider != null) {
                 oConfig = config
-                config.addDefault("watermark", true)
-                config.addDefault("obfuscate", true)
                 config.addDefault("title", "<gradient:dark_red:red>Suffix</gradient><gradient:dark_blue:blue>Changer</gradient>")
+                config.setInlineComments("title", listOf("changes the title that is used for the GUI, supports MiniMessage"))
+                config.addDefault("watermark", true)
+                config.setInlineComments("watermark", listOf("set to false to disable the watermark under the leftover buttons"))
+                config.addDefault("obfuscate", true)
+                config.setInlineComments("obfuscate", listOf("set to true to obfuscate suffixes that the players isn't allowed to use"))
+                config.addDefault("track", "suffixes")
+                config.setInlineComments("track", listOf("advanced, determines which track to use for suffixes"))
+                config.addDefault("group_weight", 3)
+                config.setInlineComments("group_weight", listOf("advanced, determines what weight the group should have in Luckperms when using /addsuffix"))
                 config.options().copyDefaults(true)
                 saveConfig()
                 api = provider.provider
@@ -84,6 +91,15 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 metrics.addCustomChart(SimplePie(
                     "vault"
                 ) { Bukkit.getPluginManager().isPluginEnabled("Vault").toString() })
+                metrics.addCustomChart(SimplePie(
+                    "suffix_count"
+                ) { (api.trackManager.getTrack(config.getString("track")?: "suffixes")?.groups?.size?: 0).toString() })
+                metrics.addCustomChart(SimplePie(
+                    "track"
+                ) { if(config.getString("track") == "suffixes") "default" else "custom" })
+                metrics.addCustomChart(SimplePie(
+                    "default_weight"
+                ) { config.getInt("weight").toString() })
             } else {
                 logger.warning("Could not find LuckPerms! This plugin is required.")
                 Bukkit.getPluginManager().disablePlugin(this)
@@ -118,8 +134,8 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 return true
             }
 
-            reloadConfig();
-            saveDefaultConfig();
+            reloadConfig()
+            saveDefaultConfig()
             oConfig = config
             sender.sendMessage(Component.text("Reloaded SuffixChanger!", NamedTextColor.GREEN))
         }
@@ -144,12 +160,12 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
             api.groupManager.createAndLoadGroup(args[0].lowercase()).thenRun {
                 api.groupManager.modifyGroup(args[0].lowercase()) {
                     it.data().add(DisplayNameNode.builder("Suffix: ${args[0].lowercase()}").build())
-                    it.data().add(WeightNode.builder(3).build())
+                    it.data().add(WeightNode.builder(config.getInt("weight")).build())
                     it.data().add(SuffixNode.builder(suffix, 3).build())
                 }
-                api.trackManager.getTrack("suffixes")!!.appendGroup(api.groupManager.getGroup(args[0].lowercase())!!)
-                api.trackManager.saveTrack(api.trackManager.getTrack("suffixes")!!)
-                sender.sendMessage(Component.text("Successfully created group ${args[0].lowercase()} with suffix ${args[1].stripSuffix()}"))
+                api.trackManager.getTrack(config.getString("track")?: "suffixes")!!.appendGroup(api.groupManager.getGroup(args[0].lowercase())!!)
+                api.trackManager.saveTrack(api.trackManager.getTrack(config.getString("track")?: "suffixes")!!)
+                sender.sendMessage(Component.text("Successfully created group ${args[0].lowercase()} with suffix ${suffix.stripSuffix()}"))
             }
         }
 
