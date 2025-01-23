@@ -5,7 +5,7 @@
 # SuffixChanger
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-Paper plugin to change LuckPerms suffixes via a GUI.
+Let players choose their suffix with a simple-to-use GUI.
 
 ## Table of Contents
 
