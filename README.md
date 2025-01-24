@@ -5,7 +5,7 @@
 # SuffixChanger
 [![standard-readme compliant](https://img.shields.io/badge/readme%20style-standard-brightgreen.svg?style=flat-square)](https://github.com/RichardLitt/standard-readme)
 
-Let players choose their suffix with a simple-to-use GUI.
+Let players choose their suffix with a simple-to-use GUI. Also contains admin gui for easily creating new suffixes.
 
 ## Table of Contents
 
@@ -29,6 +29,8 @@ For suffixes to show in chat you need another plugin to format the chat, for a s
 
 Create a group for each of your suffixes, then add them all to a track called ``suffixes``. Before players can change their suffix, you need to give them the permissions ``suffix.[group name of suffix]`` of every suffix they're allowed to use.
 
+New suffixes can be easily created with either ``/addsuffix`` or the orange button in ``/suffix``.
+
 ## Commands:
 - ``/suffix`` Open the SuffixChanger GUI
 - ``/reloadsuffixchanger`` Reloads the SuffixChanger config
@@ -39,11 +41,14 @@ Create a group for each of your suffixes, then add them all to a track called ``
   - ``suffixchanger.suffix`` to open the GUI
   - ``suffixchanger.addsuffix`` to add suffixes via a command
   - ``suffixchanger.reload`` to reload the SuffixChanger config
+  - ``suffixchanger.admin`` to access the admin gui
 
 # Configuration
   - ``title`` changes the title that is used for the GUI, supports [MiniMessage](https://docs.advntr.dev/minimessage/format.html)
   - ``watermark`` set to false to disable the watermark under the leftover buttons
   - ``obfuscate`` set to true to obfuscate suffixes that the players isn't allowed to use
+  - ``track`` advanced, determines which track to use for suffixes
+  - ``group_weight`` advanced, determines what weight the group should have in Luckperms when using /addsuffix
 
 # Contributing
 

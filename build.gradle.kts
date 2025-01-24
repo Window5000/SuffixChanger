@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.window"
-version = "1.3.3"
+version = "1.4.0"
 
 repositories {
     mavenCentral()
@@ -19,6 +19,8 @@ repositories {
         name = "sonatype"
         url = uri("https://oss.sonatype.org/content/groups/public/")
     }
+    maven("https://maven.pvphub.me/releases")
+    maven("https://repo.codemc.io/repository/maven-snapshots/")
 }
 
 dependencies {
@@ -26,6 +28,7 @@ dependencies {
     compileOnly("net.projecttl:InventoryGUI-api:4.6.1")
     compileOnly("net.luckperms:api:5.4")
     implementation("org.bstats:bstats-bukkit:3.1.0")
+    implementation("net.wesjd:anvilgui:1.10.4-SNAPSHOT")
 }
 
 var targetJavaVersion = 21
@@ -57,6 +60,10 @@ tasks.withType<ShadowJar> {
         include {
             it.moduleGroup == "org.bstats"
         }
+        include {
+            it.moduleGroup == "net.wesjd"
+        }
     }
     relocate("org.bstats", "me.window.bstats")
+    relocate("net.wesjd.anvilgui", "me.window.anvilgui")
 }

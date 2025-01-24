@@ -1,6 +1,7 @@
 package me.window.suffixchanger
 
 import me.window.suffixchanger.SuffixChanger.Companion.stripSuffix
+import me.window.suffixchanger.SuffixChanger.Companion.unitalic
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
@@ -133,7 +134,18 @@ object SuffixGui {
 
             slot(51, item4)
             slot(52, item4)
-            slot(53, item4)
+            if (!player.hasPermission("suffixchanger.admin")) {
+                slot(53, item4)
+            } else {
+                val adminStack = ItemStack.of(Material.ORANGE_STAINED_GLASS_PANE)
+                val adminMeta = adminStack.itemMeta
+                adminMeta.displayName(Component.text("Admin Menu", NamedTextColor.GOLD).unitalic())
+                adminStack.itemMeta = adminMeta
+                slot(53, adminStack) {
+                    close()
+                    AddSuffixGui.inventory(player)
+                }
+            }
         }
     }
 }

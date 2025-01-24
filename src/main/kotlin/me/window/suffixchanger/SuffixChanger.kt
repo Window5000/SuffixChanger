@@ -2,6 +2,7 @@ package me.window.suffixchanger
 
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.Node
@@ -51,6 +52,10 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
             if(match.groupValues[1].isEmpty()) return this
             return this.replaceFirst(Regex("&(.) +"), "&${match.groupValues[1]}")
         }
+
+        fun Component.unitalic(): Component {
+            return this.decoration(TextDecoration.ITALIC, false)
+        }
     }
 
     override fun onEnable() {
@@ -74,6 +79,8 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 this.getCommand("suffix")!!.setExecutor(this)
                 this.getCommand("addsuffix")!!.setExecutor(this)
                 this.getCommand("reloadsuffixchanger")!!.setExecutor(this)
+
+                AddSuffixGui.plugin = this
 
                 val metrics = Metrics(this, BSTATS_ID)
                 metrics.addCustomChart(SimplePie(
@@ -99,7 +106,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
                 ) { if(config.getString("track") == "suffixes") "default" else "custom" })
                 metrics.addCustomChart(SimplePie(
                     "default_weight"
-                ) { config.getInt("weight").toString() })
+                ) { config.getInt("group_weight").toString() })
             } else {
                 logger.warning("Could not find LuckPerms! This plugin is required.")
                 Bukkit.getPluginManager().disablePlugin(this)
