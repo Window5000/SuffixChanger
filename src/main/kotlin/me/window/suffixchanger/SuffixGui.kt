@@ -41,7 +41,8 @@ object SuffixGui {
                 val meta = item.itemMeta
                 meta.setEnchantmentGlintOverride(true)
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-                meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
+                meta.displayName(Component.empty().unitalic().append(suffix))
+                meta.lore(listOf(Component.text("You have access to this suffix!", NamedTextColor.GREEN).unitalic(), Component.text("Click to select", NamedTextColor.GRAY).unitalic()))
                 item.setItemMeta(meta)
                 return item
             } else {
@@ -49,9 +50,10 @@ object SuffixGui {
                 val meta = item.itemMeta
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                 if(SuffixChanger.oConfig.getBoolean("obfuscate"))
-                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix).decorate(TextDecoration.OBFUSCATED))
+                    meta.displayName(Component.empty().unitalic().append(suffix).decorate(TextDecoration.OBFUSCATED))
                 else
-                    meta.displayName(Component.empty().decoration(TextDecoration.ITALIC, false).append(suffix))
+                    meta.displayName(Component.empty().unitalic().append(suffix))
+                meta.lore(listOf(Component.text("You do not have access to this suffix!", NamedTextColor.RED).unitalic()))
                 item.setItemMeta(meta)
                 return item
             }
