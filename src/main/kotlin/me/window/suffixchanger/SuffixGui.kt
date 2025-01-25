@@ -7,12 +7,12 @@ import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
-import net.luckperms.api.model.group.Group
 import net.projecttl.inventory.gui
 import net.projecttl.inventory.util.InventoryType
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 
@@ -21,19 +21,16 @@ object SuffixGui {
     fun inventory(player: Player, page: Int = 0) {
         val suffixes = ArrayList<String>()
 
-        val track = SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track")?: "suffixes")
+        val track = SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track") ?: "suffixes")
         for (group in track!!.groups) {
-            if(player.hasPermission("suffix.$group")) {
+            if (player.hasPermission("suffix.$group")) {
                 suffixes.add(0, group)
             } else {
                 suffixes.add(group)
             }
         }
 
-        fun getSuffix(roup: String): String {
-            val group: Group = SuffixChanger.api.groupManager.getGroup(roup)!!
-            return "&r&f" + group.cachedData.metaData.suffix
-        }
+        fun getSuffix(roup: String): String = SuffixChanger.getSuffix(roup)
 
         fun createItem(suffix: Component, suffixName: String): ItemStack {
             if (player.hasPermission("suffix.$suffixName")) {
@@ -42,36 +39,99 @@ object SuffixGui {
                 meta.setEnchantmentGlintOverride(true)
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
                 meta.displayName(Component.empty().unitalic().append(suffix))
-                meta.lore(listOf(Component.text("You have access to this suffix!", NamedTextColor.GREEN).unitalic(), Component.text("Click to select", NamedTextColor.GRAY).unitalic()))
+                if(!player.hasPermission("suffixchanger.admin")) {
+                    meta.lore(
+                        listOf(
+                            Component.text("You have access to this suffix!", NamedTextColor.GREEN).unitalic(),
+                            Component.text("Click to select", NamedTextColor.GRAY).unitalic()
+                        )
+                    )
+                } else {
+                    meta.lore(
+                        listOf(
+                            Component.text("You have access to this suffix!", NamedTextColor.GREEN).unitalic(),
+                            Component.text("Left click to select", NamedTextColor.GRAY).unitalic(),
+                            Component.text("Right click to delete", NamedTextColor.GRAY).unitalic(),
+                            Component.text("Press ").unitalic().color(NamedTextColor.GRAY).append(Component.keybind().keybind("key.swapOffhand").build().append(Component.text(" to edit"))),
+                            Component.text("Press ").unitalic().color(NamedTextColor.GRAY).append(Component.keybind().keybind("key.drop").build().unitalic().append(Component.text(" to clear access to this suffix for all players")))
+                        )
+                    )
+                }
                 item.setItemMeta(meta)
                 return item
             } else {
                 val item = ItemStack(Material.NAME_TAG)
                 val meta = item.itemMeta
                 meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-                if(SuffixChanger.oConfig.getBoolean("obfuscate"))
+                if (SuffixChanger.oConfig.getBoolean("obfuscate"))
                     meta.displayName(Component.empty().unitalic().append(suffix).decorate(TextDecoration.OBFUSCATED))
                 else
                     meta.displayName(Component.empty().unitalic().append(suffix))
-                meta.lore(listOf(Component.text("You do not have access to this suffix!", NamedTextColor.RED).unitalic()))
+                if(!player.hasPermission("suffixchanger.admin")) {
+                    meta.lore(
+                        listOf(
+                            Component.text("You do not have access to this suffix!", NamedTextColor.RED).unitalic()
+                        )
+                    )
+                } else {
+                    meta.lore(
+                        listOf(
+                            Component.text("You do not have access to this suffix!", NamedTextColor.RED).unitalic(),
+                            Component.text("Right click to delete", NamedTextColor.GRAY).unitalic(),
+                            Component.text("Press ").unitalic().color(NamedTextColor.GRAY).append(Component.keybind().keybind("key.swapOffhand").build().append(Component.text(" to edit"))),
+                            Component.text("Press ").unitalic().color(NamedTextColor.GRAY).append(Component.keybind().keybind("key.drop").build().unitalic().append(Component.text(" to clear access to this suffix for all players")))
+                        )
+                    )
+                }
                 item.setItemMeta(meta)
                 return item
             }
         }
 
-        player.gui(MiniMessage.miniMessage().deserialize(SuffixChanger.oConfig.getString("title")?: "<gradient:dark_red:red>Suffix</gradient><gradient:dark_blue:blue>Changer</gradient>"), InventoryType.CHEST_54) {
+        player.gui(
+            MiniMessage.miniMessage().deserialize(
+                SuffixChanger.oConfig.getString("title")
+                    ?: "<gradient:dark_red:red>Suffix</gradient><gradient:dark_blue:blue>Changer</gradient>"
+            ), InventoryType.CHEST_54
+        ) {
             for ((i, suffix) in suffixes.withIndex()) {
                 if (i >= 45 * (page + 1)) break
                 if (i < 45 * page) continue
                 val newI = i - page * 45
-                slot(if (newI >= 45) newI + 3 else newI, createItem(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix).stripSuffix()), suffix)) {
-                    if (player.hasPermission("suffix.$suffix")) {
-                        for (suffix2 in SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track")?: "suffixes")!!.groups) {
+                slot(
+                    if (newI >= 45) newI + 3 else newI,
+                    createItem(
+                        LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix).stripSuffix()),
+                        suffix
+                    )
+                ) {
+                    if (player.hasPermission("suffixchanger.admin") && click == ClickType.RIGHT) {
+                        close()
+                        ConfirmGui.inventory(player, suffix, ConfirmGui.ConfirmAction.REMOVE)
+                    } else if (player.hasPermission("suffixchanger.admin") && click == ClickType.DROP) {
+                        close()
+                        ConfirmGui.inventory(player, suffix, ConfirmGui.ConfirmAction.CLEAR)
+                    } else if (player.hasPermission("suffixchanger.admin") && click == ClickType.SWAP_OFFHAND) {
+                        close()
+                        ConfirmGui.inventory(player, suffix, ConfirmGui.ConfirmAction.EDIT, "TESTSUFFIXEDIT") //TODO: Add edit GUI
+                    } else if (player.hasPermission("suffix.$suffix")) {
+                        for (suffix2 in SuffixChanger.api.trackManager.getTrack(
+                            SuffixChanger.oConfig.getString("track") ?: "suffixes"
+                        )!!.groups) {
                             SuffixChanger.removePermission(SuffixChanger.getUser(player), "group.$suffix2")
                         }
                         SuffixChanger.addPermission(SuffixChanger.getUser(player), "group.$suffix")
-                        player.sendMessage(Component.text("Your suffix is now ").color(NamedTextColor.AQUA)
-                                .append(MiniMessage.miniMessage().deserialize(MiniMessage.miniMessage().serialize(LegacyComponentSerializer.legacyAmpersand().deserialize(getSuffix(suffix).stripSuffix())))))
+                        player.sendMessage(
+                            Component.text("Your suffix is now ").color(NamedTextColor.AQUA)
+                                .append(
+                                    MiniMessage.miniMessage().deserialize(
+                                        MiniMessage.miniMessage().serialize(
+                                            LegacyComponentSerializer.legacyAmpersand()
+                                                .deserialize(getSuffix(suffix).stripSuffix())
+                                        )
+                                    )
+                                )
+                        )
                     }
                 }
             }
@@ -89,10 +149,16 @@ object SuffixGui {
                 close()
             }
 
-            val item2 = ItemStack(if (page > 0) Material.GREEN_STAINED_GLASS_PANE else Material.YELLOW_STAINED_GLASS_PANE)
+            val item2 =
+                ItemStack(if (page > 0) Material.GREEN_STAINED_GLASS_PANE else Material.YELLOW_STAINED_GLASS_PANE)
             val meta2 = item2.itemMeta
             meta2.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-            meta2.displayName(Component.text("Previous Page", if (page > 0) NamedTextColor.GREEN else NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
+            meta2.displayName(
+                Component.text(
+                    "Previous Page",
+                    if (page > 0) NamedTextColor.GREEN else NamedTextColor.YELLOW
+                ).decoration(TextDecoration.ITALIC, false)
+            )
             item2.setItemMeta(meta2)
             slot(48, item2) {
                 if (page > 0) {
@@ -100,10 +166,16 @@ object SuffixGui {
                 }
             }
 
-            val item3 = ItemStack(if (suffixes.size > (page + 1) * 45) Material.GREEN_STAINED_GLASS_PANE else Material.YELLOW_STAINED_GLASS_PANE)
+            val item3 =
+                ItemStack(if (suffixes.size > (page + 1) * 45) Material.GREEN_STAINED_GLASS_PANE else Material.YELLOW_STAINED_GLASS_PANE)
             val meta3 = item3.itemMeta
             meta3.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-            meta3.displayName(Component.text("Next Page", if (suffixes.size > (page + 1) * 45) NamedTextColor.GREEN else NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
+            meta3.displayName(
+                Component.text(
+                    "Next Page",
+                    if (suffixes.size > (page + 1) * 45) NamedTextColor.GREEN else NamedTextColor.YELLOW
+                ).decoration(TextDecoration.ITALIC, false)
+            )
             item3.setItemMeta(meta3)
             slot(50, item3) {
                 if (suffixes.size > (page + 1) * 45) {
@@ -115,13 +187,19 @@ object SuffixGui {
             val item4 = ItemStack(Material.BLUE_STAINED_GLASS_PANE)
             val meta4 = item4.itemMeta
             meta4.addItemFlags(ItemFlag.HIDE_ATTRIBUTES)
-            if(SuffixChanger.oConfig.getBoolean("watermark")) {
-                meta4.displayName(Component.text("$name v$version", NamedTextColor.DARK_AQUA).decoration(TextDecoration.ITALIC, false))
+            if (SuffixChanger.oConfig.getBoolean("watermark")) {
+                meta4.displayName(
+                    Component.text("$name v$version", NamedTextColor.DARK_AQUA).decoration(TextDecoration.ITALIC, false)
+                )
                 val lore = ArrayList<Component>()
                 if (authors != null) {
-                    lore.add(Component.text("Made by:", NamedTextColor.DARK_AQUA).decoration(TextDecoration.ITALIC, false))
+                    lore.add(
+                        Component.text("Made by:", NamedTextColor.DARK_AQUA).decoration(TextDecoration.ITALIC, false)
+                    )
                     for (author in authors) {
-                        lore.add(Component.text("- $author", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false))
+                        lore.add(
+                            Component.text("- $author", NamedTextColor.AQUA).decoration(TextDecoration.ITALIC, false)
+                        )
                     }
                 }
                 meta4.lore(lore)

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "me.window"
-version = "1.4.0"
+version = "1.4.1"
 
 repositories {
     mavenCentral()
@@ -19,7 +19,6 @@ repositories {
         name = "sonatype"
         url = uri("https://oss.sonatype.org/content/groups/public/")
     }
-    maven("https://maven.pvphub.me/releases")
     maven("https://repo.codemc.io/repository/maven-snapshots/")
 }
 

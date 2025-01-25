@@ -15,13 +15,10 @@ import net.projecttl.inventory.util.InventoryType
 import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit
 import org.bukkit.Material
-import org.bukkit.command.ConsoleCommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import java.util.*
 import java.util.function.BiFunction
-import kotlin.collections.HashMap
 
 object AddSuffixGui {
     lateinit var plugin: SuffixChanger

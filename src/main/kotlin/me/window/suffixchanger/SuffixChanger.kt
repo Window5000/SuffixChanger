@@ -3,6 +3,7 @@ package me.window.suffixchanger
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
 import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.luckperms.api.LuckPerms
 import net.luckperms.api.model.user.User
 import net.luckperms.api.node.Node
@@ -26,6 +27,14 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
         lateinit var api: LuckPerms
         lateinit var oConfig: FileConfiguration
         const val BSTATS_ID = 23488
+
+        fun getRawSuffix(roup: String): String {
+            return api.groupManager.getGroup(roup)!!.cachedData.metaData.suffix.toString()
+        }
+
+        fun getSuffix(roup: String): String {
+            return "&r&f" + getRawSuffix(roup)
+        }
 
         fun addPermission(user: User, permission: String) {
             // Add the permission
@@ -55,6 +64,10 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
 
         fun Component.unitalic(): Component {
             return this.decoration(TextDecoration.ITALIC, false)
+        }
+
+        fun String.toSuffixComponent(): Component {
+            return Component.empty().unitalic().append(LegacyComponentSerializer.legacyAmpersand().deserialize(this.stripSuffix()))
         }
     }
 
