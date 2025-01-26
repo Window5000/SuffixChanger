@@ -14,7 +14,7 @@ commands:
   addsuffix:
     description: Add a group with the specified suffix to luckperms
     usage: /addsuffix <group_name> <suffix...(use as many args here as you wish)>
-    permission: suffixchanger.addsuffix
+    permission: suffixchanger.admin
   reloadsuffixchanger:
       description: Reloads the SuffixChanger config
       usage: /reloadsuffixchanger

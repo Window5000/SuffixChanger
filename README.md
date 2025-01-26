@@ -39,9 +39,9 @@ New suffixes can be easily created with either ``/addsuffix`` or the orange butt
 ## Permissions:
   - ``suffix.[group name of suffix]`` for every suffix the player is allowed to use
   - ``suffixchanger.suffix`` to open the GUI
-  - ``suffixchanger.addsuffix`` to add suffixes via a command
+  - ``suffixchanger.addsuffix`` deprecated, use ``suffixchanger.admin`` instead
   - ``suffixchanger.reload`` to reload the SuffixChanger config
-  - ``suffixchanger.admin`` to access the admin gui
+  - ``suffixchanger.admin`` to access add, edit, and remove suffixes
 
 # Configuration
   - ``title`` changes the title that is used for the GUI, supports [MiniMessage](https://docs.advntr.dev/minimessage/format.html)

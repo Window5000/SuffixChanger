@@ -2,6 +2,7 @@ package me.window.suffixchanger
 
 import me.window.suffixchanger.SuffixChanger.Companion.api
 import me.window.suffixchanger.SuffixChanger.Companion.stripSuffix
+import me.window.suffixchanger.SuffixChanger.Companion.toSuffixComponent
 import me.window.suffixchanger.SuffixChanger.Companion.unitalic
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.NamedTextColor
@@ -155,7 +156,7 @@ object AddSuffixGui {
             }
 
             slot(7, getConfirmItemStack(player)) {
-                if (!player.hasPermission("suffixchanger.addsuffix")) {
+                if (!player.hasPermission("suffixchanger.admin")) {
                     player.sendMessage(Bukkit.permissionMessage())
                 } else {
                     val dat = data[player]!!
@@ -172,7 +173,8 @@ object AddSuffixGui {
                                 SuffixChanger.oConfig.getString("track") ?: "suffixes"
                             )!!
                         )
-                        player.sendMessage(Component.text("Successfully created group ${dat.rankName!!.lowercase()} with suffix ${dat.suffix!!.stripSuffix()} and weight ${dat.weight}"))
+                        player.sendMessage(Component.text("Successfully created group ${dat.rankName!!.lowercase()} with suffix ", NamedTextColor.WHITE).append(dat.suffix!!.toSuffixComponent()).append(
+                            Component.text(" and weight ${dat.weight}", NamedTextColor.WHITE)))
                         data.remove(player)
                         player.closeInventory()
                     }

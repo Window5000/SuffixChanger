@@ -67,7 +67,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
         }
 
         fun String.toSuffixComponent(): Component {
-            return Component.empty().unitalic().append(LegacyComponentSerializer.legacyAmpersand().deserialize(this.stripSuffix()))
+            return Component.empty().unitalic().color(NamedTextColor.WHITE).append(LegacyComponentSerializer.legacyAmpersand().deserialize(this.stripSuffix()))
         }
     }
 
@@ -161,7 +161,7 @@ class SuffixChanger : JavaPlugin(), CommandExecutor {
         }
 
         if (command.name.lowercase() == "addsuffix") {
-            if(!sender.hasPermission("suffixchanger.addsuffix") && sender !is ConsoleCommandSender) {
+            if(!sender.hasPermission("suffixchanger.admin") && sender !is ConsoleCommandSender) {
                 sender.sendMessage(Bukkit.permissionMessage())
                 return true
             }

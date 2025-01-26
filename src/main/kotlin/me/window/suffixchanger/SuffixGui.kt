@@ -19,6 +19,16 @@ import org.bukkit.inventory.ItemStack
 
 object SuffixGui {
     fun inventory(player: Player, page: Int = 0) {
+        if(SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track")?: "suffixes") == null) {
+            if(player.hasPermission("suffixchanger.admin")) {
+                ConfirmGui.inventory(player, SuffixChanger.oConfig.getString("track")?: "suffixes", ConfirmGui.ConfirmAction.TRACK)
+            } else {
+                player.sendMessage(Component.text("Suffix Changer has not yet been set up, please contact an administrator to fix this issue.",
+                    NamedTextColor.RED))
+            }
+            return
+        }
+
         val suffixes = ArrayList<String>()
 
         val track = SuffixChanger.api.trackManager.getTrack(SuffixChanger.oConfig.getString("track") ?: "suffixes")
@@ -113,7 +123,7 @@ object SuffixGui {
                         ConfirmGui.inventory(player, suffix, ConfirmGui.ConfirmAction.CLEAR)
                     } else if (player.hasPermission("suffixchanger.admin") && click == ClickType.SWAP_OFFHAND) {
                         close()
-                        ConfirmGui.inventory(player, suffix, ConfirmGui.ConfirmAction.EDIT, "TESTSUFFIXEDIT") //TODO: Add edit GUI
+                        ConfirmGui.editSuffix(player, suffix)
                     } else if (player.hasPermission("suffix.$suffix")) {
                         for (suffix2 in SuffixChanger.api.trackManager.getTrack(
                             SuffixChanger.oConfig.getString("track") ?: "suffixes"
@@ -217,9 +227,9 @@ object SuffixGui {
             if (!player.hasPermission("suffixchanger.admin")) {
                 slot(53, item4)
             } else {
-                val adminStack = ItemStack.of(Material.ORANGE_STAINED_GLASS_PANE)
+                val adminStack = ItemStack.of(Material.GREEN_STAINED_GLASS_PANE)
                 val adminMeta = adminStack.itemMeta
-                adminMeta.displayName(Component.text("Admin Menu", NamedTextColor.GOLD).unitalic())
+                adminMeta.displayName(Component.text("Add Suffix", NamedTextColor.GREEN).unitalic())
                 adminStack.itemMeta = adminMeta
                 slot(53, adminStack) {
                     close()
